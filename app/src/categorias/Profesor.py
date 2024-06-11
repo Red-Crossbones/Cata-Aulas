@@ -1,3 +1,5 @@
+# profesor.py
+
 class Profesor:
     def __init__(self, dni, apellido, nombre, condicion, categoria, dedicacion, materias):
         self.dni = dni
