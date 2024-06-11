@@ -34,10 +34,12 @@ def leer_excel(nombre_archivo):
             condicion_profesor = row['Condición']
             categoria_profesor = row['Categoría']
             dedicacion_profesor = row['Dedicación']
+            # Nueva columna para los horarios disponibles
+            horarios_disponibles = row['Horarios Disponibles']
 
             # Crear un profesor
             profesor = Profesor(dni_profesor, apellido_profesor, nombre_profesor,
-                                condicion_profesor, categoria_profesor, dedicacion_profesor, [])
+                                condicion_profesor, categoria_profesor, dedicacion_profesor, [], horarios_disponibles)
 
             # Si el profesor aún no está en la lista, agregarlo
             if dni_profesor not in profesores:
@@ -71,4 +73,4 @@ def leer_excel(nombre_archivo):
 
 
 if __name__ == "__main__":
-    leer_excel(r'etc\dist2cuad.xlsx')
+    leer_excel(r'etc\dist2cuadH.xlsx')
