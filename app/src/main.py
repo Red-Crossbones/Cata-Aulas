@@ -16,7 +16,7 @@ def main():
         edificio.agregar_piso("PB", 2, 20)
 
         # Mostrar disponibilidad
-        edificio.mostrar_disponibilidad()
+        # edificio.mostrar_disponibilidad()
 
         # Guardar la información en CSV y JSON
         edificio.guardar_aulas_csv("aulas.csv")
