@@ -1,6 +1,5 @@
-# main.py
-
 import pandas as pd
+import csv
 from categorias.Materia import Materia
 from categorias.Profesor import Profesor
 
@@ -10,9 +9,8 @@ def leer_excel(nombre_archivo):
         # Leer el archivo Excel
         df = pd.read_excel(nombre_archivo)
 
-        # Lista para almacenar materias y profesores
-        materias = []
-        profesores = {}
+        # Lista para almacenar datos procesados
+        processed_data = []
 
         # Procesar cada fila del DataFrame
         for index, row in df.iterrows():
@@ -34,39 +32,48 @@ def leer_excel(nombre_archivo):
             condicion_profesor = row['Condición']
             categoria_profesor = row['Categoría']
             dedicacion_profesor = row['Dedicación']
-            # Nueva columna para los horarios disponibles
             horarios_disponibles = row['Horarios Disponibles']
 
-            # Crear un profesor
-            profesor = Profesor(dni_profesor, apellido_profesor, nombre_profesor,
-                                condicion_profesor, categoria_profesor, dedicacion_profesor, [], horarios_disponibles)
+            # Crear un diccionario para almacenar datos de la materia
+            materia_data = {
+                "codigo_guarani": codigo_guarani,
+                "carrera": carrera,
+                "nombre": nombre_materia,
+                "año": año,
+                "cuatrimestre": cuatrimestre,
+                "taxonomia": taxonomia,
+                "horas_semanales": horas_semanales,
+                "alumnos_esperados": alumnos_esperados,
+                "comisiones": comisiones,
+                "tipo_clase": tipo_clase,
+                "horas_frente_curso": horas_frente_curso,
+                "profesores": []
+            }
 
-            # Si el profesor aún no está en la lista, agregarlo
-            if dni_profesor not in profesores:
-                profesores[dni_profesor] = profesor
+            # Crear un diccionario para almacenar datos del profesor
+            profesor_data = {
+                "apellido": apellido_profesor,
+                "nombre": nombre_profesor,
+                "condicion": condicion_profesor,
+                "categoria": categoria_profesor
+            }
 
-            # Agregar la materia al profesor
-            profesores[dni_profesor].materias.append(
-                {'nombre': nombre_materia, 'codigo_guarani': codigo_guarani})
+            # Agregar profesor a la materia
+            materia_data["profesores"].append(profesor_data)
 
-            # Crear una materia y asignar los profesores
-            materia = Materia(codigo_guarani, nombre_materia, año, cuatrimestre, taxonomia,
-                              horas_semanales, alumnos_esperados, comisiones, tipo_clase, horas_frente_curso, carrera, [])
-            materia.profesores.append(profesor.to_dict())
+            # Agregar la materia a la lista de datos procesados
+            processed_data.append(materia_data)
 
-            # Agregar materia a la lista de materias
-            materias.append(materia)
-
-        # Guardar los datos en archivos CSV y JSON
-        df_materias = pd.DataFrame([materia.to_dict() for materia in materias])
-        df_profesores = pd.DataFrame(
-            [profesor.to_dict() for profesor in profesores.values()])
-
-        df_materias.to_csv('materias.csv', index=False)
-        df_profesores.to_csv('profesores.csv', index=False)
-
-        df_materias.to_json('materias.json', orient='records')
-        df_profesores.to_json('profesores.json', orient='records')
+        # Guardar los datos en un archivo CSV
+        with open('materias.csv', 'w', newline='', encoding='utf-8') as csvfile:
+            # **Cambiar el orden de los campos**
+            fieldnames = ["codigo_guarani", "nombre", "carrera", "año", "cuatrimestre", "taxonomia",
+                          "horas_semanales", "alumnos_esperados", "comisiones", "tipo_clase",
+                          "horas_frente_curso", "profesores"]
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            for materia in processed_data:
+                writer.writerow(materia)
 
     except Exception as e:
         print(f"Error processing the Excel file: {e}")
