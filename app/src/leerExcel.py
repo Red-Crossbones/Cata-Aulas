@@ -9,8 +9,9 @@ def leer_excel(nombre_archivo):
         # Leer el archivo Excel
         df = pd.read_excel(nombre_archivo)
 
-        # Lista para almacenar datos procesados
-        processed_data = []
+        # Listas para almacenar datos procesados
+        profesores_data = []
+        carrera_data = []
 
         # Procesar cada fila del DataFrame
         for index, row in df.iterrows():
@@ -37,7 +38,6 @@ def leer_excel(nombre_archivo):
             # Crear un diccionario para almacenar datos de la materia
             materia_data = {
                 "codigo_guarani": codigo_guarani,
-                "carrera": carrera,
                 "nombre": nombre_materia,
                 "año": año,
                 "cuatrimestre": cuatrimestre,
@@ -47,6 +47,7 @@ def leer_excel(nombre_archivo):
                 "comisiones": comisiones,
                 "tipo_clase": tipo_clase,
                 "horas_frente_curso": horas_frente_curso,
+                "carrera": carrera,
                 "profesores": []
             }
 
@@ -61,22 +62,40 @@ def leer_excel(nombre_archivo):
             # Agregar profesor a la materia
             materia_data["profesores"].append(profesor_data)
 
-            # Agregar la materia a la lista de datos procesados
-            processed_data.append(materia_data)
+            # Procesar datos para profesores.csv
+            profesores_data_row = {
+                "dni": dni_profesor,
+                "apellido": apellido_profesor,
+                "nombre": nombre_profesor,
+                "condicion": condicion_profesor,
+                "categoria": categoria_profesor,
+                "dedicacion": dedicacion_profesor,
+                "horarios_disponibles": horarios_disponibles
+            }
+            profesores_data.append(profesores_data_row)
 
-        # Guardar los datos en un archivo CSV
-        with open('materias.csv', 'w', newline='', encoding='utf-8') as csvfile:
-            # **Cambiar el orden de los campos**
-            fieldnames = ["codigo_guarani", "nombre", "carrera", "año", "cuatrimestre", "taxonomia",
-                          "horas_semanales", "alumnos_esperados", "comisiones", "tipo_clase",
-                          "horas_frente_curso", "profesores"]
-            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-            writer.writeheader()
-            for materia in processed_data:
-                writer.writerow(materia)
+            # Procesar datos para carrera.csv
+            carrera_data_row = {
+                "codigo_guarani": codigo_guarani,
+                "carrera": carrera
+            }
+            carrera_data.append(carrera_data_row)
+
+        # Guardar datos en archivos CSV separados
+        save_data_to_csv("profesores.csv", profesores_data)
+        save_data_to_csv("carrera.csv", carrera_data)
 
     except Exception as e:
         print(f"Error processing the Excel file: {e}")
+
+
+def save_data_to_csv(filename, data):
+    with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
+        fieldnames = list(data[0].keys())
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        for row in data:
+            writer.writerow(row)
 
 
 if __name__ == "__main__":
