@@ -62,15 +62,49 @@ def leer_materias(archivo):
         print(f"Error: Indice fuera de rango en {archivo}")
     return materias
 
+# Función para leer el archivo de profesores
+
+
+def leer_profesores(archivo):
+    try:
+        with open(archivo, newline='', encoding='ISO-8859-1') as csvfile:
+            reader = csv.reader(csvfile)
+            profesores = []
+            for row in reader:
+                if len(row) >= 8:
+                    profesores.append({
+                        'nombre': row[2],
+                        'apellido': row[1],
+                        'dni': row[0],
+                        'condicion': row[3],
+                        'categoria': row[4],
+                        'dedicacion': row[5],
+                        'materias': row[7],
+                        'horarios_disponibles': row[6],
+                    })
+                else:
+                    print(f"Error: Fila con menos de 3 columnas en {archivo}")
+    except FileNotFoundError:
+        print(f"Error: Archivo {archivo} no encontrado")
+    except csv.Error:
+        print(f"Error: Error al leer el archivo {archivo}")
+    except IndexError:
+        print(f"Error: Indice fuera de rango en {archivo}")
+    return profesores
+
 
 # Leer los archivos
 aulas = leer_aulas('Aulas.csv')
 materias = leer_materias('Materias.csv')
+profesores = leer_profesores('Profesores.csv')
 
 # Imprimir los datos
-print("Aulas:")
-for aula in aulas:
-    print(aula['nombre'])
-print("\nMaterias:")
-for materia in materias:
-    print(materia['nombre'])
+# print("Aulas:")
+# for aula in aulas:
+#     print(aula['nombre'])
+# print("\nMaterias:")
+# for materia in materias:
+#     print(materia['nombre'])
+# for profesores in profesores:
+#     print(profesores['nombre'], profesores['apellido'],
+#           profesores['materias'], profesores['horarios_disponibles'])

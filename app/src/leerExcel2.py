@@ -11,7 +11,7 @@ def leer_excel(nombre_archivo):
         # Diccionarios para almacenar datos procesados
         carreras_data = {}
         profesores_data = {}
-        materias_data = []
+        materias_data = {}
         materias_set = set()  # Conjunto para evitar duplicados de materias
 
         # Procesar cada fila del DataFrame
@@ -62,6 +62,7 @@ def leer_excel(nombre_archivo):
                 materia_data = {
                     "codigo_guarani": codigo_guarani,
                     "nombre": nombre_materia,
+                    "carrera": carrera,
                     "año": año,
                     "cuatrimestre": cuatrimestre,
                     "taxonomia": taxonomia,
@@ -70,10 +71,16 @@ def leer_excel(nombre_archivo):
                     "comisiones": comisiones,
                     "tipo_clase": tipo_clase,
                     "horas_frente_curso": horas_frente_curso,
-                    "carrera": carrera
+                    "profesores": []  # Lista para almacenar profesores de la materia
                 }
-                materias_data.append(materia_data)
+                materias_data[materia_key] = materia_data
                 materias_set.add(materia_key)
+            # Agregar profesor a la lista de profesores de la materia (nombre, apellido y categoría)
+            materias_data[materia_key]["profesores"].append({
+                "categoria": categoria_profesor,
+                "nombre": nombre_profesor,
+                "apellido": apellido_profesor
+            })
 
         # Convertir diccionarios a listas
         carreras_list = [{"carrera": k, "codigo_guarani": v}
@@ -92,14 +99,15 @@ def leer_excel(nombre_archivo):
             }
             for profesor in profesores_data.values()
         ]
+        materias_list = list(materias_data.values())
 
         # Guardar datos en archivos CSV y JSON
         save_data_to_csv("carrera.csv", carreras_list)
         save_data_to_json("carrera.json", carreras_list)
         save_data_to_csv("profesores.csv", profesores_list)
         save_data_to_json("profesores.json", profesores_list)
-        save_data_to_csv("materias.csv", materias_data)
-        save_data_to_json("materias.json", materias_data)
+        save_data_to_csv("materias.csv", materias_list)
+        save_data_to_json("materias.json", materias_list)
 
     except pd.errors.EmptyDataError:
         print("El archivo Excel está vacío.")
