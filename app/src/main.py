@@ -22,6 +22,9 @@ def main():
         edificio.guardar_aulas_csv("aulas.csv")
         edificio.guardar_aulas_json("aulas.json")
 
+        # Corre el programa de asignación de materias
+        subprocess.run(["python", "app/src/asignacion3.py"])
+
     except Exception as e:
         print(f"Error: {e}")
 

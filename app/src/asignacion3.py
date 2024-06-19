@@ -5,8 +5,6 @@ import sys
 # Configurar la salida estándar a UTF-8
 sys.stdout.reconfigure(encoding='ISO-8859-1')
 
-# Función para leer el archivo de aulas
-
 
 def leer_aulas(archivo):
     aulas = []
@@ -15,34 +13,35 @@ def leer_aulas(archivo):
             reader = csv.reader(csvfile)
             for row in reader:
                 if len(row) >= 4:
-                    aulas.append({
-                        'nombre': row[0],
-                        'capacidad': int(row[1]) if row[1].isdigit() else 0,
-                        'edificio': row[2],
-                        'disponibilidad': ast.literal_eval(row[3]) if row[3] else []
-                    })
+                    try:
+                        capacidad = int(row[1]) if row[1].isdigit() else 0
+                        disponibilidad = ast.literal_eval(
+                            row[3]) if row[3] else []
+                        aulas.append({
+                            'nombre': row[0],
+                            'capacidad': capacidad,
+                            'edificio': row[2],
+                            'disponibilidad': disponibilidad
+                        })
+                    except (ValueError, SyntaxError):
+                        print(f"Error: Valor inválido en la fila {
+                              row} del archivo {archivo}")
                 else:
                     print(f"Error: Fila con menos de 4 columnas en {archivo}")
     except FileNotFoundError:
         print(f"Error: Archivo {archivo} no encontrado")
-    except csv.Error:
-        print(f"Error: Error al leer el archivo {archivo}")
-    except IndexError:
-        print(f"Error: Indice fuera de rango en {archivo}")
-    except ValueError:
-        print(
-            f"Error: No se puede convertir la capacidad a un entero en {archivo}")
+    except csv.Error as e:
+        print(f"Error: Error al leer el archivo {archivo}: {e}")
     return aulas
 
 
-# Función para leer el archivo de materias
 def leer_materias(archivo):
+    materias = []
     try:
         with open(archivo, newline='', encoding='ISO-8859-1') as csvfile:
             reader = csv.reader(csvfile)
-            materias = []
             for row in reader:
-                if len(row) >= 8:
+                if len(row) >= 12:  # Ajustado para asegurar que todas las columnas requeridas estén presentes
                     materias.append({
                         'codigo_guarani': row[0],
                         'nombre': row[1],
@@ -51,27 +50,25 @@ def leer_materias(archivo):
                         'cuatrimestre': row[4],
                         'profesores': row[11],
                         'alumnos_esperados': row[7],
+                        'horas_frente_curso': row[10],
+                        'comisiones': row[8]
                     })
                 else:
-                    print(f"Error: Fila con menos de 8 columnas en {archivo}")
+                    print(f"Error: Fila con menos de 12 columnas en {archivo}")
     except FileNotFoundError:
         print(f"Error: Archivo {archivo} no encontrado")
-    except csv.Error:
-        print(f"Error: Error al leer el archivo {archivo}")
-    except IndexError:
-        print(f"Error: Indice fuera de rango en {archivo}")
+    except csv.Error as e:
+        print(f"Error: Error al leer el archivo {archivo}: {e}")
     return materias
-
-# Función para leer el archivo de profesores
 
 
 def leer_profesores(archivo):
+    profesores = []
     try:
         with open(archivo, newline='', encoding='ISO-8859-1') as csvfile:
             reader = csv.reader(csvfile)
-            profesores = []
             for row in reader:
-                if len(row) >= 8:
+                if len(row) >= 8:  # Ajustado para asegurar que todas las columnas requeridas estén presentes
                     profesores.append({
                         'nombre': row[2],
                         'apellido': row[1],
@@ -80,13 +77,11 @@ def leer_profesores(archivo):
                         'horarios_disponibles': row[6],
                     })
                 else:
-                    print(f"Error: Fila con menos de 3 columnas en {archivo}")
+                    print(f"Error: Fila con menos de 8 columnas en {archivo}")
     except FileNotFoundError:
         print(f"Error: Archivo {archivo} no encontrado")
-    except csv.Error:
-        print(f"Error: Error al leer el archivo {archivo}")
-    except IndexError:
-        print(f"Error: Indice fuera de rango en {archivo}")
+    except csv.Error as e:
+        print(f"Error: Error al leer el archivo {archivo}: {e}")
     return profesores
 
 
@@ -98,10 +93,14 @@ profesores = leer_profesores('Profesores.csv')
 # Imprimir los datos
 # print("Aulas:")
 # for aula in aulas:
-#     print(aula['nombre'])
+#     print(aula['nombre'], aula['capacidad'],
+#           aula['edificio'], aula['disponibilidad'])
+
 # print("\nMaterias:")
 # for materia in materias:
 #     print(materia['nombre'], materia['profesores'])
-# for profesores in profesores:
-#     print(profesores['nombre'], profesores['apellido'],
-#           profesores['materias'], profesores['horarios_disponibles'])
+
+# print("\nProfesores:")
+# for profesor in profesores:
+#     print(profesor['nombre'], profesor['apellido'],
+#           profesor['materias'], profesor['horarios_disponibles'])
