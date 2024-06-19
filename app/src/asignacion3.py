@@ -1,5 +1,9 @@
 import csv
 import ast
+import sys
+
+# Configurar la salida estándar a UTF-8
+sys.stdout.reconfigure(encoding='ISO-8859-1')
 
 # Función para leer el archivo de aulas
 
@@ -62,3 +66,11 @@ def leer_materias(archivo):
 # Leer los archivos
 aulas = leer_aulas('Aulas.csv')
 materias = leer_materias('Materias.csv')
+
+# Imprimir los datos
+print("Aulas:")
+for aula in aulas:
+    print(aula['nombre'])
+print("\nMaterias:")
+for materia in materias:
+    print(materia['nombre'])

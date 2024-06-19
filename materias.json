@@ -26,19 +26,6 @@
         "carrera": "Ingenier\u00eda en Computaci\u00f3n"
     },
     {
-        "codigo_guarani": "B6002",
-        "nombre": "F\u00edsica General I",
-        "a\u00f1o": 1,
-        "cuatrimestre": "CUATRIMESTRE_2",
-        "taxonomia": "C",
-        "horas_semanales": 8,
-        "alumnos_esperados": 73,
-        "comisiones": 2,
-        "tipo_clase": "Te\u00f3rico",
-        "horas_frente_curso": 4,
-        "carrera": "Ingenier\u00eda en Computaci\u00f3n"
-    },
-    {
         "codigo_guarani": "B6003",
         "nombre": "Programaci\u00f3n I",
         "a\u00f1o": 1,
@@ -48,32 +35,6 @@
         "alumnos_esperados": 120,
         "comisiones": 2,
         "tipo_clase": "Te\u00f3rico/Pr\u00e1ctio",
-        "horas_frente_curso": 6,
-        "carrera": "Ingenier\u00eda en Computaci\u00f3n"
-    },
-    {
-        "codigo_guarani": "B6003",
-        "nombre": "Programaci\u00f3n I",
-        "a\u00f1o": 1,
-        "cuatrimestre": "CUATRIMESTRE_2",
-        "taxonomia": "C",
-        "horas_semanales": 6,
-        "alumnos_esperados": 80,
-        "comisiones": 2,
-        "tipo_clase": "Te\u00f3rico",
-        "horas_frente_curso": 6,
-        "carrera": "Ingenier\u00eda en Computaci\u00f3n"
-    },
-    {
-        "codigo_guarani": "B6003",
-        "nombre": "Programaci\u00f3n I",
-        "a\u00f1o": 1,
-        "cuatrimestre": "CUATRIMESTRE_2",
-        "taxonomia": "C",
-        "horas_semanales": 6,
-        "alumnos_esperados": 100,
-        "comisiones": 2,
-        "tipo_clase": "Pr\u00e1ctico",
         "horas_frente_curso": 6,
         "carrera": "Ingenier\u00eda en Computaci\u00f3n"
     },
@@ -104,19 +65,6 @@
         "carrera": "Ingenier\u00eda en Computaci\u00f3n"
     },
     {
-        "codigo_guarani": "B6005",
-        "nombre": "Qu\u00edmica",
-        "a\u00f1o": 1,
-        "cuatrimestre": "CUATRIMESTRE_2",
-        "taxonomia": "B",
-        "horas_semanales": 4,
-        "alumnos_esperados": 100,
-        "comisiones": 2,
-        "tipo_clase": "Pr\u00e1ctico",
-        "horas_frente_curso": 8,
-        "carrera": "Ingenier\u00eda en Computaci\u00f3n"
-    },
-    {
         "codigo_guarani": "B6010",
         "nombre": "Matem\u00e1tica III",
         "a\u00f1o": 2,
@@ -130,19 +78,6 @@
         "carrera": "Ingenier\u00eda en Computaci\u00f3n"
     },
     {
-        "codigo_guarani": "B6010",
-        "nombre": "Matem\u00e1tica III",
-        "a\u00f1o": 2,
-        "cuatrimestre": "CUATRIMESTRE_2",
-        "taxonomia": "D",
-        "horas_semanales": 6,
-        "alumnos_esperados": 30,
-        "comisiones": 1,
-        "tipo_clase": "Pr\u00e1ctico",
-        "horas_frente_curso": 3,
-        "carrera": "Ingenier\u00eda en Computaci\u00f3n"
-    },
-    {
         "codigo_guarani": "B6011",
         "nombre": "F\u00edsica General II",
         "a\u00f1o": 2,
@@ -152,19 +87,6 @@
         "alumnos_esperados": 12,
         "comisiones": 1,
         "tipo_clase": "Te\u00f3rico",
-        "horas_frente_curso": 4,
-        "carrera": "Ingenier\u00eda en Computaci\u00f3n"
-    },
-    {
-        "codigo_guarani": "B6011",
-        "nombre": "F\u00edsica General II",
-        "a\u00f1o": 2,
-        "cuatrimestre": "CUATRIMESTRE_2",
-        "taxonomia": "D",
-        "horas_semanales": 8,
-        "alumnos_esperados": 12,
-        "comisiones": 1,
-        "tipo_clase": "Pr\u00e1ctico",
         "horas_frente_curso": 4,
         "carrera": "Ingenier\u00eda en Computaci\u00f3n"
     },
@@ -234,58 +156,6 @@
         "carrera": "Ingenier\u00eda en Computaci\u00f3n"
     },
     {
-        "codigo_guarani": "B6003",
-        "nombre": "Programaci\u00f3n I",
-        "a\u00f1o": 1,
-        "cuatrimestre": "CUATRIMESTRE_2",
-        "taxonomia": "C",
-        "horas_semanales": 6,
-        "alumnos_esperados": 47,
-        "comisiones": 1,
-        "tipo_clase": "Pr\u00e1ctico",
-        "horas_frente_curso": 6,
-        "carrera": "Ingenier\u00eda en Computaci\u00f3n"
-    },
-    {
-        "codigo_guarani": "B6003",
-        "nombre": "Programaci\u00f3n I",
-        "a\u00f1o": 1,
-        "cuatrimestre": "CUATRIMESTRE_2",
-        "taxonomia": "C",
-        "horas_semanales": 6,
-        "alumnos_esperados": 80,
-        "comisiones": 2,
-        "tipo_clase": "Pr\u00e1ctico",
-        "horas_frente_curso": 6,
-        "carrera": "Ingenier\u00eda en Computaci\u00f3n"
-    },
-    {
-        "codigo_guarani": "B6003",
-        "nombre": "Programaci\u00f3n I",
-        "a\u00f1o": 1,
-        "cuatrimestre": "CUATRIMESTRE_2",
-        "taxonomia": "C",
-        "horas_semanales": 6,
-        "alumnos_esperados": 80,
-        "comisiones": 2,
-        "tipo_clase": "Te\u00f3rico",
-        "horas_frente_curso": 6,
-        "carrera": "Ingenier\u00eda en Computaci\u00f3n"
-    },
-    {
-        "codigo_guarani": "B6004",
-        "nombre": "Electr\u00f3nica Digital",
-        "a\u00f1o": 1,
-        "cuatrimestre": "CUATRIMESTRE_2",
-        "taxonomia": "C",
-        "horas_semanales": 6,
-        "alumnos_esperados": 185,
-        "comisiones": 2,
-        "tipo_clase": "Te\u00f3rico",
-        "horas_frente_curso": 6,
-        "carrera": "Ingenier\u00eda en Computaci\u00f3n"
-    },
-    {
         "codigo_guarani": "B6012",
         "nombre": "An\u00e1lisis de Circuitos",
         "a\u00f1o": 2,
@@ -293,45 +163,6 @@
         "taxonomia": "D",
         "horas_semanales": 8,
         "alumnos_esperados": 30,
-        "comisiones": 1,
-        "tipo_clase": "Pr\u00e1ctico",
-        "horas_frente_curso": 4,
-        "carrera": "Ingenier\u00eda en Computaci\u00f3n"
-    },
-    {
-        "codigo_guarani": "B6012",
-        "nombre": "An\u00e1lisis de Circuitos",
-        "a\u00f1o": 2,
-        "cuatrimestre": "CUATRIMESTRE_2",
-        "taxonomia": "D",
-        "horas_semanales": 8,
-        "alumnos_esperados": 30,
-        "comisiones": 1,
-        "tipo_clase": "Te\u00f3rico",
-        "horas_frente_curso": 4,
-        "carrera": "Ingenier\u00eda en Computaci\u00f3n"
-    },
-    {
-        "codigo_guarani": "B6002",
-        "nombre": "F\u00edsica General I",
-        "a\u00f1o": 1,
-        "cuatrimestre": "CUATRIMESTRE_2",
-        "taxonomia": "C",
-        "horas_semanales": 8,
-        "alumnos_esperados": 73,
-        "comisiones": 2,
-        "tipo_clase": "Te\u00f3rico",
-        "horas_frente_curso": 8,
-        "carrera": "Ingenier\u00eda en Computaci\u00f3n"
-    },
-    {
-        "codigo_guarani": "B6002",
-        "nombre": "F\u00edsica General I",
-        "a\u00f1o": 1,
-        "cuatrimestre": "CUATRIMESTRE_2",
-        "taxonomia": "C",
-        "horas_semanales": 8,
-        "alumnos_esperados": 73,
         "comisiones": 1,
         "tipo_clase": "Pr\u00e1ctico",
         "horas_frente_curso": 4,
