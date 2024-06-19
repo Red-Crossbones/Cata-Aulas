@@ -5,7 +5,7 @@ from categorias.Edificio import Edificio
 def main():
     try:
         # Ejecutar leerExcel.py usando subprocess
-        subprocess.run(["python", "app/src/leerExcel.py"])
+        subprocess.run(["python", "app/src/leerExcel2.py"])
 
         # Crear el edificio
         edificio = Edificio("Anasagasti II")
