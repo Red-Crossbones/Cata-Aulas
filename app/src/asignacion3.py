@@ -6,55 +6,56 @@ import ast
 
 def leer_aulas(archivo):
     aulas = []
-    with open(archivo, newline='', encoding='ISO-8859-1') as csvfile:
-        reader = csv.reader(csvfile)
-        for row in reader:
-            aulas.append({
-                'nombre': row[0],
-                'capacidad': int(row[1]),
-                'edificio': row[2],
-                'disponibilidad': ast.literal_eval(row[3])
-            })
+    try:
+        with open(archivo, newline='', encoding='ISO-8859-1') as csvfile:
+            reader = csv.reader(csvfile)
+            for row in reader:
+                if len(row) >= 4:
+                    aulas.append({
+                        'nombre': row[0],
+                        'capacidad': int(row[1]) if row[1].isdigit() else 0,
+                        'edificio': row[2],
+                        'disponibilidad': ast.literal_eval(row[3]) if row[3] else []
+                    })
+                else:
+                    print(f"Error: Fila con menos de 4 columnas en {archivo}")
+    except FileNotFoundError:
+        print(f"Error: Archivo {archivo} no encontrado")
+    except csv.Error:
+        print(f"Error: Error al leer el archivo {archivo}")
+    except IndexError:
+        print(f"Error: Indice fuera de rango en {archivo}")
+    except ValueError:
+        print(
+            f"Error: No se puede convertir la capacidad a un entero en {archivo}")
     return aulas
 
 
 # Función para leer el archivo de materias
-
-
 def leer_materias(archivo):
-    materias = []
-    with open(archivo, newline='', encoding='ISO-8859-1') as csvfile:
-        reader = csv.reader(csvfile)
-        for row in reader:
-            materias.append({
-                'codigo_guarani': row[0],
-                'nombre': row[1],
-                'carrera': row[2],
-                'anio': row[3],
-                'cuatrimestre': row[4],
-                'profesores': row[11],
-                'alumnos_esperados': row[7],
-            })
-
-            # Validar y procesar la información de profesores
-            try:
-                profesores_value = row[11].strip()
-                if profesores_value:  # Si no está vacío
-                    profesores_data = ast.literal_eval(
-                        profesores_value)  # Convierte a diccionario
-                    if isinstance(profesores_data, dict) and all(key in profesores_data for key in ['dia', 'horas']):
-                        materias[-1]['profesores'] = profesores_data
-                    else:
-                        print(f"Error: 'profesores' en la materia {
-                              materias[-1]['nombre']} no tiene la estructura correcta")
+    try:
+        with open(archivo, newline='', encoding='ISO-8859-1') as csvfile:
+            reader = csv.reader(csvfile)
+            materias = []
+            for row in reader:
+                if len(row) >= 8:
+                    materias.append({
+                        'codigo_guarani': row[0],
+                        'nombre': row[1],
+                        'carrera': row[2],
+                        'anio': row[3],
+                        'cuatrimestre': row[4],
+                        'profesores': None,
+                        'alumnos_esperados': row[7],
+                    })
                 else:
-                    print(f"Error: 'profesores' en la materia {
-                          materias[-1]['nombre']} no es un diccionario válido")
-
-            except (SyntaxError, ValueError):
-                print(f"Error: 'profesores' en la materia {
-                      materias[-1]['nombre']} no es un diccionario válido")
-
+                    print(f"Error: Fila con menos de 8 columnas en {archivo}")
+    except FileNotFoundError:
+        print(f"Error: Archivo {archivo} no encontrado")
+    except csv.Error:
+        print(f"Error: Error al leer el archivo {archivo}")
+    except IndexError:
+        print(f"Error: Indice fuera de rango en {archivo}")
     return materias
 
 
