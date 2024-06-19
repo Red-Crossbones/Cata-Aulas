@@ -49,7 +49,7 @@ def leer_materias(archivo):
                         'carrera': row[2],
                         'anio': row[3],
                         'cuatrimestre': row[4],
-                        'profesores': None,
+                        'profesores': row[11],
                         'alumnos_esperados': row[7],
                     })
                 else:
@@ -75,10 +75,7 @@ def leer_profesores(archivo):
                     profesores.append({
                         'nombre': row[2],
                         'apellido': row[1],
-                        'dni': row[0],
                         'condicion': row[3],
-                        'categoria': row[4],
-                        'dedicacion': row[5],
                         'materias': row[7],
                         'horarios_disponibles': row[6],
                     })
@@ -104,7 +101,7 @@ profesores = leer_profesores('Profesores.csv')
 #     print(aula['nombre'])
 # print("\nMaterias:")
 # for materia in materias:
-#     print(materia['nombre'])
+#     print(materia['nombre'], materia['profesores'])
 # for profesores in profesores:
 #     print(profesores['nombre'], profesores['apellido'],
 #           profesores['materias'], profesores['horarios_disponibles'])
