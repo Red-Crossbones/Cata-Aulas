@@ -85,16 +85,54 @@ def leer_profesores(archivo):
     return profesores
 
 
+def organizar_horarios_profesores(profesores):
+    horarios_disponibles = {}  # Diccionario para almacenar horarios de profesores
+
+    for profesor in profesores:
+        profesor_horarios = {}  # Diccionario para almacenar horarios de este profesor
+        str_copia_horarios_disponibles = profesor['horarios_disponibles']
+
+        # Separar por punto y coma para separar los horarios del profesor
+        for bloque_dia_horas in str_copia_horarios_disponibles.split(';'):
+            dia_horas = bloque_dia_horas.strip().split(',')  # Separar por comas
+
+            if len(dia_horas) > 1:  # Verificar si hay al menos dos elementos
+                dia = dia_horas[0].strip()
+                horas_rango = dia_horas[1].strip()
+                horas = horas_rango.split('-')
+                if len(horas) == 2:
+                    hora_inicio = horas[0].strip()
+                    hora_fin = horas[1].strip()
+
+                    if dia not in profesor_horarios:
+                        profesor_horarios[dia] = []
+
+                    profesor_horarios[dia].append(f"{hora_inicio}-{hora_fin}")
+
+        # Actualizar el horario del profesor en horarios_disponibles
+        nombre_completo = f"{profesor['nombre']} {profesor['apellido']}"
+        horarios_disponibles[nombre_completo] = profesor_horarios
+
+    # Imprimir o utilizar los horarios organizados almacenados en horarios_disponibles
+    print("Profesores y sus horarios disponibles por día:")
+    for profesor_nombre, horarios_dia in horarios_disponibles.items():
+        print(f"{profesor_nombre}:")
+        for dia, horas in horarios_dia.items():
+            print(f"{dia}: {', '.join(horas)}")
+
+
 # Leer los archivos
 aulas = leer_aulas('Aulas.csv')
 materias = leer_materias('Materias.csv')
 profesores = leer_profesores('Profesores.csv')
 
+# Procesar horarios disponibles por día para cada profesor
+organizar_horarios_profesores(profesores)
+
 # Imprimir los datos
 # print("Aulas:")
 # for aula in aulas:
-#     print(aula['nombre'], aula['capacidad'],
-#           aula['edificio'], aula['disponibilidad'])
+#     print(aula['nombre'], aula['capacidad'], aula['edificio'], aula['disponibilidad'])
 
 # print("\nMaterias:")
 # for materia in materias:
@@ -102,5 +140,4 @@ profesores = leer_profesores('Profesores.csv')
 
 # print("\nProfesores:")
 # for profesor in profesores:
-#     print(profesor['nombre'], profesor['apellido'],
-#           profesor['materias'], profesor['horarios_disponibles'])
+#     print(profesor['nombre'], profesor['apellido'], profesor['materias'], profesor['horarios_disponibles'])
