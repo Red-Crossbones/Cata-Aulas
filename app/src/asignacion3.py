@@ -1,6 +1,7 @@
 import csv
 import ast
 import sys
+from collections import defaultdict
 
 # Configurar la salida estándar a UTF-8
 sys.stdout.reconfigure(encoding='ISO-8859-1')
@@ -86,26 +87,25 @@ def leer_profesores(archivo):
 
 
 def organizar_horarios_profesores(profesores):
-    horarios_disponibles = {}  # Diccionario para almacenar horarios de profesores
+    # Diccionario para almacenar horarios de profesores
+    horarios_disponibles = defaultdict(lambda: defaultdict(list))
 
     for profesor in profesores:
-        profesor_horarios = {}  # Diccionario para almacenar horarios de este profesor
+        # Diccionario para almacenar horarios de este profesor
+        profesor_horarios = defaultdict(list)
         str_copia_horarios_disponibles = profesor['horarios_disponibles']
 
-        # Separar por punto y coma para separar los horarios del profesor
+        # Separar por punto y coma para separar los días
         for bloque_dia_horas in str_copia_horarios_disponibles.split(';'):
             dia_horas = bloque_dia_horas.strip().split(',')  # Separar por comas
-
-            if len(dia_horas) > 1:  # Verificar si hay al menos dos elementos
-                dia = dia_horas[0].strip()
-                horas_rango = dia_horas[1].strip()
+            dia = dia_horas[0].strip()  # Obtener el día
+            # Iterar sobre los rangos de horas
+            for horas_rango in dia_horas[1:]:
+                horas_rango = horas_rango.strip()
                 horas = horas_rango.split('-')
                 if len(horas) == 2:
                     hora_inicio = horas[0].strip()
                     hora_fin = horas[1].strip()
-
-                    if dia not in profesor_horarios:
-                        profesor_horarios[dia] = []
 
                     profesor_horarios[dia].append(f"{hora_inicio}-{hora_fin}")
 
@@ -118,7 +118,7 @@ def organizar_horarios_profesores(profesores):
     for profesor_nombre, horarios_dia in horarios_disponibles.items():
         print(f"{profesor_nombre}:")
         for dia, horas in horarios_dia.items():
-            print(f"{dia}: {', '.join(horas)}")
+            print(f"  {dia}: {', '.join(horas)}")
 
 
 # Leer los archivos
