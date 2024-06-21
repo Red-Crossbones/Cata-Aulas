@@ -115,6 +115,75 @@ def organizar_horarios_profesores(profesores):
     return horarios_disponibles
 
 
+def asignar_materias_aulas(materias, aulas, horarios_profesores):
+    materias_asignadas = []
+    materias_sin_asignar = []
+    dias_semana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes']
+    horas_del_dia = list(range(8, 23))  # De 8 a 22 horas
+
+    while materias:
+        materia = materias.pop()
+        asignada = False
+        for aula in aulas:
+            if aula['capacidad'] >= materia['alumnos_esperados']:
+                for dia in dias_semana:
+                    if asignada:
+                        break
+                    horarios_materia = horarios_profesores.get(
+                        materia['profesores'], {}).get(dia, [])
+                    for horario in horarios_materia:
+                        inicio, fin = map(int, horario.split('-'))
+                        disponible = all(
+                            aula['disponibilidad'][dia][hora - 8] == True for hora in range(inicio, fin))
+                        if disponible:
+                            for hora in range(inicio, fin):
+                                aula['disponibilidad'][dia][hora -
+                                                            8] = materia['nombre']
+                            materias_asignadas.append({
+                                'materia': materia['nombre'],
+                                'aula': aula['nombre'],
+                                'dia': dia,
+                                'horario': f"{inicio}-{fin}"
+                            })
+                            asignada = True
+                            break
+        if not asignada:
+            materias_sin_asignar.append(materia)
+
+    return materias_asignadas, materias_sin_asignar, aulas
+
+
+def guardar_materias_asignadas(materias_asignadas, archivo):
+    with open(archivo, mode='w', newline='', encoding='ISO-8859-1') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(['Materia', 'Aula', 'Día', 'Horario'])
+        for asignacion in materias_asignadas:
+            writer.writerow([asignacion['materia'], asignacion['aula'],
+                            asignacion['dia'], asignacion['horario']])
+
+
+def guardar_materias_sin_asignar(materias_sin_asignar, archivo):
+    with open(archivo, mode='w', newline='', encoding='ISO-8859-1') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(['Codigo', 'Nombre', 'Carrera', 'Año', 'Cuatrimestre',
+                        'Profesores', 'Alumnos Esperados', 'Horas Frente a Curso', 'Comisiones'])
+        for materia in materias_sin_asignar:
+            writer.writerow([
+                materia['codigo_guarani'], materia['nombre'], materia['carrera'],
+                materia['anio'], materia['cuatrimestre'], materia['profesores'],
+                materia['alumnos_esperados'], materia['horas_frente_curso'], materia['comisiones']
+            ])
+
+
+def guardar_estado_aulas(aulas, archivo):
+    with open(archivo, mode='w', newline='', encoding='ISO-8859-1') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(['Nombre', 'Capacidad', 'Edificio', 'Disponibilidad'])
+        for aula in aulas:
+            writer.writerow([aula['nombre'], aula['capacidad'],
+                            aula['edificio'], str(aula['disponibilidad'])])
+
+
 # Leer los archivos
 aulas = leer_aulas('Aulas.csv')
 materias = leer_materias('Materias.csv')
@@ -122,6 +191,7 @@ profesores = leer_profesores('Profesores.csv')
 
 # Procesar horarios disponibles por día para cada profesor
 horarios_profesores = organizar_horarios_profesores(profesores)
+asignar_materias_aulas(materias, aulas, horarios_profesores)
 
 # Imprimir los datos
 # print("Aulas:")
