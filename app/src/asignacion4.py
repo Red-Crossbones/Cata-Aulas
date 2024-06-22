@@ -1,7 +1,6 @@
 import csv
 import ast
 import sys
-import itertools
 from collections import defaultdict
 
 # Configurar la salida estándar a UTF-8
@@ -74,13 +73,14 @@ def leer_profesores(archivo):
             next(reader)  # Saltar encabezado
             for row in reader:
                 if len(row) >= 8:  # Ajustado para asegurar que todas las columnas requeridas estén presentes
-                    profesores.append({
+                    profes_dict = {
                         'nombre': row[2],
                         'apellido': row[1],
                         'condicion': row[3],
                         'materias': row[7],
                         'horarios_disponibles': row[6],
-                    })
+                    }
+                    profesores.append(profes_dict)
                 else:
                     print(f"Error: Fila con menos de 8 columnas en {archivo}")
     except FileNotFoundError:
