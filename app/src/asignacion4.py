@@ -1,10 +1,11 @@
 import csv
 import ast
 import sys
+import itertools
 from collections import defaultdict
 
 # Configurar la salida estándar a UTF-8
-sys.stdout.reconfigure(encoding='ISO-8859-1')
+sys.stdout.reconfigure(encoding='UTF-8')
 
 
 def leer_aulas(archivo):
@@ -114,104 +115,18 @@ def organizar_horarios_profesores(profesores):
 
 
 def organizar_horarios_aulas(aulas):
-    horarios_disponibles_aulas = {}  # Diccionario para almacenar horarios de aulas
+    horarios_disponibles_aulas = defaultdict(lambda: defaultdict(list))
 
     for aula in aulas:
-        # Obtener el diccionario de disponibilidad directamente
         disponibilidad_aula = aula['disponibilidad']
 
-        horarios_aula = {}  # Diccionario para almacenar horarios de este aula
-
         for dia, disponibilidad_horaria in disponibilidad_aula.items():
-            # Lista para almacenar horarios disponibles en este día
-            horarios_aula[dia] = []
-
             for hora, disponible in enumerate(disponibilidad_horaria, start=8):
                 if disponible:
-                    horarios_aula[dia].append(f"{hora}-{hora+1}")
-
-        # Actualizar el horario del aula en horarios_disponibles_aulas
-        horarios_disponibles_aulas[aula['nombre']] = horarios_aula
+                    horarios_disponibles_aulas[aula['nombre']][dia].append(
+                        f"{hora}-{hora+1}")
 
     return horarios_disponibles_aulas
-
-
-def asignar_materias_aulas(materias, aulas, horarios_profesores):
-    materias_asignadas = []
-    materias_sin_asignar = []
-    dias_semana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes']
-
-    while materias:
-        materia = materias.pop()
-        asignada = False
-
-        for aula in aulas:
-            if aula['capacidad'] >= int(materia['alumnos_esperados']):
-                for dia in dias_semana:
-                    horarios_materia = horarios_profesores.get(
-                        materia['profesores'], {}).get(dia, [])
-
-                    for horario in horarios_materia:
-                        inicio, fin = map(int, horario.split('-'))
-
-                        if (fin - inicio) * 2 <= aula['capacidad'] and not asignada:
-
-                            # Verificar disponibilidad del aula para el horario
-                            disponible = True
-                            for hora in range(inicio, fin):
-                                if not aula['disponibilidad'][dia][hora - 8]:
-                                    disponible = False
-                                    break
-
-                            if disponible:
-                                # Asignar materia al aula
-                                for hora in range(inicio, fin):
-                                    aula['disponibilidad'][dia][hora -
-                                                                8] = materia['nombre']
-                                materias_asignadas.append({
-                                    'materia': materia['nombre'],
-                                    'aula': aula['nombre'],
-                                    'dia': dia,
-                                    'horario': f"{inicio}-{fin}"
-                                })
-                                asignada = True
-                                break
-
-        if not asignada:
-            materias_sin_asignar.append(materia)
-
-    return materias_asignadas, materias_sin_asignar, aulas
-
-
-def guardar_materias_asignadas(materias_asignadas, archivo):
-    with open(archivo, mode='w', newline='', encoding='ISO-8859-1') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow(['Materia', 'Aula', 'Día', 'Horario'])
-        for asignacion in materias_asignadas:
-            writer.writerow([asignacion['materia'], asignacion['aula'],
-                            asignacion['dia'], asignacion['horario']])
-
-
-def guardar_materias_sin_asignar(materias_sin_asignar, archivo):
-    with open(archivo, mode='w', newline='', encoding='ISO-8859-1') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow(['Codigo', 'Nombre', 'Carrera', 'Año', 'Cuatrimestre',
-                        'Profesores', 'Alumnos Esperados', 'Horas Frente a Curso', 'Comisiones'])
-        for materia in materias_sin_asignar:
-            writer.writerow([
-                materia['codigo_guarani'], materia['nombre'], materia['carrera'],
-                materia['anio'], materia['cuatrimestre'], materia['profesores'],
-                materia['alumnos_esperados'], materia['horas_frente_curso'], materia['comisiones']
-            ])
-
-
-def guardar_estado_aulas(aulas, archivo):
-    with open(archivo, mode='w', newline='', encoding='ISO-8859-1') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow(['Nombre', 'Capacidad', 'Edificio', 'Disponibilidad'])
-        for aula in aulas:
-            writer.writerow([aula['nombre'], aula['capacidad'],
-                            aula['edificio'], str(aula['disponibilidad'])])
 
 
 # Leer los archivos
@@ -225,16 +140,9 @@ horarios_profesores = organizar_horarios_profesores(profesores)
 # Imprimir o devolver los horarios organizados almacenados en horarios_disponibles_aulas
 horarios_aulas = organizar_horarios_aulas(aulas)
 
-# # Imprimir o utilizar los horarios organizados almacenados en horarios_disponibles_aulas
-# print(horarios_aulas)
-
-# Asignar materias a las aulas
-materias_asignadas, materias_sin_asignar, aulas_actualizadas = asignar_materias_aulas(
-    materias, aulas, horarios_profesores)
-
-# Guardar materias asignadas y no asignadas
-guardar_materias_asignadas(materias_asignadas, 'Materias_Asignadas.csv')
-guardar_materias_sin_asignar(materias_sin_asignar, 'Materias_Sin_Asignar.csv')
-
-# Guardar estado actualizado de las aulas
-guardar_estado_aulas(aulas_actualizadas, 'Aulas_Actualizadas.csv')
+# Imprimir los horarios organizados de manera legible
+# print("Aulas y sus horarios disponibles por día:")
+# for aula_nombre, horarios_dia in horarios_aulas.items():
+#     print(f"\nAula: {aula_nombre}")
+#     for dia, horas in horarios_dia.items():
+#         print(f"  {dia}: {', '.join(horas)}")
