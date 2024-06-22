@@ -12,6 +12,7 @@ def leer_aulas(archivo):
     try:
         with open(archivo, newline='', encoding='ISO-8859-1') as csvfile:
             reader = csv.reader(csvfile)
+            next(reader)  # Saltar encabezado
             for row in reader:
                 if len(row) >= 4:
                     try:
@@ -41,6 +42,7 @@ def leer_materias(archivo):
     try:
         with open(archivo, newline='', encoding='ISO-8859-1') as csvfile:
             reader = csv.reader(csvfile)
+            next(reader)  # Saltar encabezado
             for row in reader:
                 if len(row) >= 12:  # Ajustado para asegurar que todas las columnas requeridas estén presentes
                     materias.append({
@@ -50,8 +52,8 @@ def leer_materias(archivo):
                         'anio': row[3],
                         'cuatrimestre': row[4],
                         'profesores': row[11],
-                        'alumnos_esperados': row[7],
-                        'horas_frente_curso': row[10],
+                        'alumnos_esperados': int(row[7]) if row[7].isdigit() else 0,
+                        'horas_frente_curso': int(row[10]) if row[10].isdigit() else 0,
                         'comisiones': row[8]
                     })
                 else:
@@ -68,6 +70,7 @@ def leer_profesores(archivo):
     try:
         with open(archivo, newline='', encoding='ISO-8859-1') as csvfile:
             reader = csv.reader(csvfile)
+            next(reader)  # Saltar encabezado
             for row in reader:
                 if len(row) >= 8:  # Ajustado para asegurar que todas las columnas requeridas estén presentes
                     profesores.append({
@@ -87,31 +90,26 @@ def leer_profesores(archivo):
 
 
 def organizar_horarios_profesores(profesores):
-    # Diccionario para almacenar horarios de profesores
     horarios_disponibles = defaultdict(lambda: defaultdict(list))
 
     for profesor in profesores:
-        # Diccionario para almacenar horarios de este profesor
         profesor_horarios = defaultdict(list)
         str_copia_horarios_disponibles = profesor['horarios_disponibles']
 
-        # Separar por punto y coma para separar los días
         for bloque_dia_horas in str_copia_horarios_disponibles.split(';'):
             dia_horas = bloque_dia_horas.strip().split(',')  # Separar por comas
             dia = dia_horas[0].strip()  # Obtener el día
-            # Iterar sobre los rangos de horas
-            for horas_rango in dia_horas[1:]:
-                horas_rango = horas_rango.strip()
-                horas = horas_rango.split('-')
-                if len(horas) == 2:
-                    hora_inicio = horas[0].strip()
-                    hora_fin = horas[1].strip()
 
+            for horas_rango in dia_horas[1:]:
+                horas = horas_rango.strip().split('-')
+                if len(horas) == 2:
+                    hora_inicio = int(horas[0].strip())
+                    hora_fin = int(horas[1].strip())
                     profesor_horarios[dia].append(f"{hora_inicio}-{hora_fin}")
 
-        # Actualizar el horario del profesor en horarios_disponibles
         nombre_completo = f"{profesor['nombre']} {profesor['apellido']}"
         horarios_disponibles[nombre_completo] = profesor_horarios
+
     return horarios_disponibles
 
 
@@ -119,34 +117,42 @@ def asignar_materias_aulas(materias, aulas, horarios_profesores):
     materias_asignadas = []
     materias_sin_asignar = []
     dias_semana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes']
-    horas_del_dia = list(range(8, 23))  # De 8 a 22 horas
 
     while materias:
         materia = materias.pop()
         asignada = False
+
         for aula in aulas:
-            if aula['capacidad'] >= materia['alumnos_esperados']:
+            if aula['capacidad'] >= int(materia['alumnos_esperados']):
                 for dia in dias_semana:
-                    if asignada:
-                        break
                     horarios_materia = horarios_profesores.get(
                         materia['profesores'], {}).get(dia, [])
+
                     for horario in horarios_materia:
                         inicio, fin = map(int, horario.split('-'))
-                        disponible = all(
-                            aula['disponibilidad'][dia][hora - 8] == True for hora in range(inicio, fin))
-                        if disponible:
+
+                        if (fin - inicio) * 2 <= aula['capacidad'] and not asignada:
+                            # Verificar disponibilidad del aula para el horario
+                            disponible = True
                             for hora in range(inicio, fin):
-                                aula['disponibilidad'][dia][hora -
-                                                            8] = materia['nombre']
-                            materias_asignadas.append({
-                                'materia': materia['nombre'],
-                                'aula': aula['nombre'],
-                                'dia': dia,
-                                'horario': f"{inicio}-{fin}"
-                            })
-                            asignada = True
-                            break
+                                if not aula['disponibilidad'][dia][hora - 8]:
+                                    disponible = False
+                                    break
+
+                            if disponible:
+                                # Asignar materia al aula
+                                for hora in range(inicio, fin):
+                                    aula['disponibilidad'][dia][hora -
+                                                                8] = materia['nombre']
+                                materias_asignadas.append({
+                                    'materia': materia['nombre'],
+                                    'aula': aula['nombre'],
+                                    'dia': dia,
+                                    'horario': f"{inicio}-{fin}"
+                                })
+                                asignada = True
+                                break
+
         if not asignada:
             materias_sin_asignar.append(materia)
 
@@ -191,24 +197,18 @@ profesores = leer_profesores('Profesores.csv')
 
 # Procesar horarios disponibles por día para cada profesor
 horarios_profesores = organizar_horarios_profesores(profesores)
-asignar_materias_aulas(materias, aulas, horarios_profesores)
+# Imprime los profesores y sus horarios
+print("Profesores y sus horarios disponibles por día:")
+for profesor_nombre, horarios_dia in horarios_profesores.items():
+    print(f"{profesor_nombre}:")
+    for dia, horas in horarios_dia.items():
+        print(f"  {dia}: {', '.join(horas)}")
 
-# Imprimir los datos
-# print("Aulas:")
-# for aula in aulas:
-#     print(aula['nombre'], aula['capacidad'], aula['edificio'], aula['disponibilidad'])
+# Asignar materias a aulas
+materias_asignadas, materias_sin_asignar, aulas_actualizadas = asignar_materias_aulas(
+    materias, aulas, horarios_profesores)
 
-# print("\nMaterias:")
-# for materia in materias:
-#     print(materia['nombre'], materia['profesores'])
-
-# print("\nProfesores:")
-# for profesor in profesores:
-#     print(profesor['nombre'], profesor['apellido'], profesor['materias'], profesor['horarios_disponibles'])
-
-# Imprimir o utilizar los horarios organizados almacenados en horarios_disponibles
-# print("Profesores y sus horarios disponibles por día:")
-# for profesor_nombre, horarios_dia in horarios_profesores.items():
-#     print(f"{profesor_nombre}:")
-#     for dia, horas in horarios_dia.items():
-#         print(f"  {dia}: {', '.join(horas)}")
+# Guardar resultados
+guardar_materias_asignadas(materias_asignadas, 'Materias_Asignadas.csv')
+guardar_materias_sin_asignar(materias_sin_asignar, 'Materias_Sin_Asignar.csv')
+guardar_estado_aulas(aulas_actualizadas, 'Aulas_Actualizadas.csv')

@@ -87,31 +87,26 @@ def leer_profesores(archivo):
 
 
 def organizar_horarios_profesores(profesores):
-    # Diccionario para almacenar horarios de profesores
     horarios_disponibles = defaultdict(lambda: defaultdict(list))
 
     for profesor in profesores:
-        # Diccionario para almacenar horarios de este profesor
         profesor_horarios = defaultdict(list)
         str_copia_horarios_disponibles = profesor['horarios_disponibles']
 
-        # Separar por punto y coma para separar los días
         for bloque_dia_horas in str_copia_horarios_disponibles.split(';'):
             dia_horas = bloque_dia_horas.strip().split(',')  # Separar por comas
             dia = dia_horas[0].strip()  # Obtener el día
-            # Iterar sobre los rangos de horas
-            for horas_rango in dia_horas[1:]:
-                horas_rango = horas_rango.strip()
-                horas = horas_rango.split('-')
-                if len(horas) == 2:
-                    hora_inicio = horas[0].strip()
-                    hora_fin = horas[1].strip()
 
+            for horas_rango in dia_horas[1:]:
+                horas = horas_rango.strip().split('-')
+                if len(horas) == 2:
+                    hora_inicio = int(horas[0].strip())
+                    hora_fin = int(horas[1].strip())
                     profesor_horarios[dia].append(f"{hora_inicio}-{hora_fin}")
 
-        # Actualizar el horario del profesor en horarios_disponibles
         nombre_completo = f"{profesor['nombre']} {profesor['apellido']}"
         horarios_disponibles[nombre_completo] = profesor_horarios
+
     return horarios_disponibles
 
 
