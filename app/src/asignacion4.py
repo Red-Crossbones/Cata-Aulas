@@ -113,6 +113,29 @@ def organizar_horarios_profesores(profesores):
     return horarios_disponibles
 
 
+def organizar_horarios_aulas(aulas):
+    horarios_disponibles_aulas = {}  # Diccionario para almacenar horarios de aulas
+
+    for aula in aulas:
+        # Obtener el diccionario de disponibilidad directamente
+        disponibilidad_aula = aula['disponibilidad']
+
+        horarios_aula = {}  # Diccionario para almacenar horarios de este aula
+
+        for dia, disponibilidad_horaria in disponibilidad_aula.items():
+            # Lista para almacenar horarios disponibles en este día
+            horarios_aula[dia] = []
+
+            for hora, disponible in enumerate(disponibilidad_horaria, start=8):
+                if disponible:
+                    horarios_aula[dia].append(f"{hora}-{hora+1}")
+
+        # Actualizar el horario del aula en horarios_disponibles_aulas
+        horarios_disponibles_aulas[aula['nombre']] = horarios_aula
+
+    return horarios_disponibles_aulas
+
+
 def asignar_materias_aulas(materias, aulas, horarios_profesores):
     materias_asignadas = []
     materias_sin_asignar = []
@@ -132,6 +155,7 @@ def asignar_materias_aulas(materias, aulas, horarios_profesores):
                         inicio, fin = map(int, horario.split('-'))
 
                         if (fin - inicio) * 2 <= aula['capacidad'] and not asignada:
+
                             # Verificar disponibilidad del aula para el horario
                             disponible = True
                             for hora in range(inicio, fin):
@@ -197,18 +221,20 @@ profesores = leer_profesores('Profesores.csv')
 
 # Procesar horarios disponibles por día para cada profesor
 horarios_profesores = organizar_horarios_profesores(profesores)
-# Imprime los profesores y sus horarios
-print("Profesores y sus horarios disponibles por día:")
-for profesor_nombre, horarios_dia in horarios_profesores.items():
-    print(f"{profesor_nombre}:")
-    for dia, horas in horarios_dia.items():
-        print(f"  {dia}: {', '.join(horas)}")
 
-# Asignar materias a aulas
+# Imprimir o devolver los horarios organizados almacenados en horarios_disponibles_aulas
+horarios_aulas = organizar_horarios_aulas(aulas)
+
+# # Imprimir o utilizar los horarios organizados almacenados en horarios_disponibles_aulas
+# print(horarios_aulas)
+
+# Asignar materias a las aulas
 materias_asignadas, materias_sin_asignar, aulas_actualizadas = asignar_materias_aulas(
     materias, aulas, horarios_profesores)
 
-# Guardar resultados
+# Guardar materias asignadas y no asignadas
 guardar_materias_asignadas(materias_asignadas, 'Materias_Asignadas.csv')
 guardar_materias_sin_asignar(materias_sin_asignar, 'Materias_Sin_Asignar.csv')
+
+# Guardar estado actualizado de las aulas
 guardar_estado_aulas(aulas_actualizadas, 'Aulas_Actualizadas.csv')
