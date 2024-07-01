@@ -133,7 +133,8 @@ def organizar_horarios_aulas(aulas):
             for hora, disponible in enumerate(disponibilidad_horaria, start=8):
                 if disponible:
                     horarios_disponibles_aulas[aula['nombre']][dia].append(
-                        f"{hora}-{hora + 1}")
+                        # f"{hora}-{hora + 1}")
+                        f"{hora}")
 
     return horarios_disponibles_aulas
 
@@ -173,41 +174,6 @@ def asignar_materias_a_aulas(materias, horarios_profesores, horarios_aulas):
     return asignaciones
 
 
-def buscar_aulas_disponibles_profesor(horarios_aulas, aulas, horarios_profesor, nombre_profesor_str):
-    aulas_disponibles = []
-    aulas_encontradas = []
-    for aula, horarios_dia_aula in horarios_aulas.items():
-        for dia_aula, horas_aula in horarios_dia_aula.items():
-            for hora_aula_str in horas_aula:
-                inicio_aula, fin_aula = map(int, hora_aula_str.split('-'))
-                aulas_encontradas.append(aula)
-
-                # Test de que encuentra las aulas
-                # print(aula, dia_aula, horas_aula)
-
-                for dia_profesor, horarios_profesor_dia in horarios_profesor.items():
-                    if dia_aula == dia_profesor:
-                        for hora_profesor_str in horarios_profesor_dia:
-                            inicio_prof, fin_prof = map(
-                                int, hora_profesor_str.split('-'))
-                            print(dia_profesor, horarios_profesor_dia)
-
-                            # Verificar disponibilidad de horas (convertidas a enteros)
-                            if (inicio_prof <= inicio_aula < fin_prof or
-                                    inicio_prof < fin_aula <= fin_prof or
-                                    inicio_aula <= inicio_prof < fin_aula or
-                                    inicio_aula < fin_prof <= fin_aula):
-
-                                aulas_disponibles.append({
-                                    'aula': aula,
-                                    'dia': dia_aula,
-                                    'hora_aula': hora_aula_str,
-                                    'hora_profesor': hora_profesor_str
-                                })
-
-    return aulas_disponibles
-
-
 # Leer los archivos
 aulas = leer_aulas('Aulas.csv')
 materias = leer_materias('Materias.csv')
@@ -219,7 +185,7 @@ horarios_profesores = organizar_horarios_profesores(profesores)
 # Imprimir o devolver los horarios organizados almacenados en horarios_disponibles_aulas
 horarios_aulas = organizar_horarios_aulas(aulas)
 
-# # # Asignar materias a aulas
+# Asignar materias a aulas
 # asignaciones = asignar_materias_a_aulas(
 #     materias, horarios_profesores, horarios_aulas)
 
@@ -246,13 +212,16 @@ horarios_aulas = organizar_horarios_aulas(aulas)
 # for asignacion in asignaciones:
 #     print(f"Materia: {asignacion['materia']}, Aula: {asignacion['aula']}, Día: {
 #           asignacion['dia']}, Hora: {asignacion['hora']}, Profesor: {asignacion['profesor']}")
-copia_aulas = aulas.copy()
-baulasdipos = buscar_aulas_disponibles_profesor(
-    horarios_aulas, aulas, horarios_profesores, 'CATERINA LAMPERTI')
-print(baulasdipos)
 
 # Imprimir horario del profesor escrito
-# for dia, horas_disponibles in horarios_profesores["CATERINA LAMPERTI"].items():
-#     print(f"Día: {dia}")
-#     for hora_rango in horas_disponibles:
-#         print(f"\t- {hora_rango}")
+print("Horario de profesores:")
+for dia, horas_disponibles in horarios_profesores["CATERINA LAMPERTI"].items():
+    print(f"Día: {dia}")
+    for hora_rango in horas_disponibles:
+        print(f"\t- {hora_rango}")
+
+print("\nHorario de aulas:")
+for aula, aulas_disponibles in horarios_aulas.items():
+    print(f"Aula: {aula}")
+    for hora_rango in aulas_disponibles:
+        print(f"\t- {hora_rango, aulas_disponibles[hora_rango]}")
