@@ -146,14 +146,14 @@ def asignar_materias_a_aulas(materias, horarios_profesores, horarios_aulas):
         nombre_profesor = materia['profesores']
         horarios_profesor = horarios_profesores.get(nombre_profesor, {})
 
-        print(f"Nombre: {nombre_profesor}", end=" | Horarios: ")
+        # print(f"Nombre: {nombre_profesor}", end=" | Horarios: ")
         for dia, horas_dia in horarios_profesor.items():
-            print(f"  - {dia}: {horas_dia}")  # Iterate over values
+            # print(f"  - {dia}: {horas_dia}")  # Iterate over values
 
-        if not horarios_profesor:
-            print(f"No se encontraron horarios disponibles para el profesor {
-                  nombre_profesor}")
-            continue
+            if not horarios_profesor:
+                print(f"No se encontraron horarios disponibles para el profesor {
+                    nombre_profesor}")
+                continue
 
         asignado = False
         for dia, horas_profesor in horarios_profesor.items():
@@ -187,7 +187,7 @@ profesores = leer_profesores('Profesores.csv')
 # Procesar horarios disponibles por día para cada profesor
 horarios_profesores = organizar_horarios_profesores(profesores)
 
-# Imprimir o devolver los horarios organizados almacenados en horarios_disponibles_aulas
+# Procesar o devolver los horarios organizados almacenados en horarios_disponibles_aulas
 horarios_aulas = organizar_horarios_aulas(aulas)
 
 # Asignar materias a aulas
@@ -212,21 +212,23 @@ asignaciones = asignar_materias_a_aulas(
 # for materia in materias:
 #     print(f"\nMateria: {materia['nombre']}, Profesor: {materia['profesores']}")
 
-# Asignaciones
-print("Asignaciones realizadas:")
-for asignacion in asignaciones:
-    print(f"Materia: {asignacion['materia']}, Aula: {asignacion['aula']}, Día: {
-          asignacion['dia']}, Hora: {asignacion['hora']}, Profesor: {asignacion['profesor']}")
+# # Asignaciones
+# print("Asignaciones realizadas:")
+# for asignacion in asignaciones:
+#     print(f"Materia: {asignacion['materia']}, Aula: {asignacion['aula']}, Día: {
+#           asignacion['dia']}, Hora: {asignacion['hora']}, Profesor: {asignacion['profesor']}")
 
 # Imprimir horario del profesor escrito
-# print("Horario de profesores:")
-# for dia, horas_disponibles in horarios_profesores["CATERINA LAMPERTI"].items():
-#     print(f"Día: {dia}")
-#     for hora_rango in horas_disponibles:
-#         print(f"\t- {hora_rango}")
+print("Horario de profesores:")
+# Diccionario de profesores, que tiene "items" como horarios, dni, materias asignadas
+# Aca seria una consulta de horario dentro del diccionario, profesor espeficico. Es para un buscador para mas adelante
+for dia, horas_disponibles in horarios_profesores["CATERINA LAMPERTI"].items():
+    print(f"Día: {dia}")
+    for hora_rango in horas_disponibles:
+        print(f"\t- {hora_rango}")
 
 # print("\nHorario de aulas:")
-# for aula, aulas_disponibles in horarios_aulas.items():
-#     print(f"Aula: {aula}")
-#     for hora_rango in aulas_disponibles:
-#         print(f"\t- {hora_rango, aulas_disponibles[hora_rango]}")
+for aula, aulas_disponibles in horarios_aulas.items():  # Diccionario de aulas disponibles
+    print(f"Aula: {aula}")
+    for hora_rango in aulas_disponibles:
+        print(f"\t- {hora_rango, aulas_disponibles[hora_rango]}")
