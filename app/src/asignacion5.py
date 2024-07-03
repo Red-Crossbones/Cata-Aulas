@@ -218,17 +218,21 @@ asignaciones = asignar_materias_a_aulas(
 #     print(f"Materia: {asignacion['materia']}, Aula: {asignacion['aula']}, Día: {
 #           asignacion['dia']}, Hora: {asignacion['hora']}, Profesor: {asignacion['profesor']}")
 
-# Imprimir horario del profesor escrito
-print("Horario de profesores:")
-# Diccionario de profesores, que tiene "items" como horarios, dni, materias asignadas
-# Aca seria una consulta de horario dentro del diccionario, profesor espeficico. Es para un buscador para mas adelante
-for dia, horas_disponibles in horarios_profesores["CATERINA LAMPERTI"].items():
-    print(f"Día: {dia}")
-    for hora_rango in horas_disponibles:
-        print(f"\t- {hora_rango}")
+# Imprimir horario del profesor específico
+profesor_nombre = "CATERINA LAMPERTI"
+if profesor_nombre in horarios_profesores:
+    print(f"Profesor: {profesor_nombre}")
+    print("Horario de profesores:")
+    for dia, horas_disponibles in horarios_profesores[profesor_nombre].items():
+        print(f"Día: {dia}")
+        for hora_rango in horas_disponibles:
+            print(f"\t- {hora_rango}")
+else:
+    print(f"No se encontraron horarios para el profesor {profesor_nombre}")
 
-# print("\nHorario de aulas:")
-for aula, aulas_disponibles in horarios_aulas.items():  # Diccionario de aulas disponibles
+# Imprimir horario de aulas
+print("\nHorario de aulas:")
+for aula, aulas_disponibles in horarios_aulas.items():
     print(f"Aula: {aula}")
-    for hora_rango in aulas_disponibles:
-        print(f"\t- {hora_rango, aulas_disponibles[hora_rango]}")
+    for dia, horas in aulas_disponibles.items():
+        print(f"\t{dia}: {', '.join(horas)}")
