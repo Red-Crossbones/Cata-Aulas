@@ -139,44 +139,40 @@ def organizar_horarios_aulas(aulas):
     return horarios_disponibles_aulas
 
 
-def asignar_materias_a_aulas(materias, horarios_profesores, horarios_aulas):
-    asignaciones = []
+def separar_horas(horas_disponibles):
+    rangos_separados = []
+    for hora_rango in horas_disponibles:
+        hora_inicio, hora_fin = hora_rango.split('-')
+        rangos_separados.append((int(hora_inicio), int(hora_fin)))
+    return rangos_separados
 
-    for materia in materias:
-        nombre_profesor = materia['profesores']
-        horarios_profesor = horarios_profesores.get(nombre_profesor, {})
 
-        # print(f"Nombre: {nombre_profesor}", end=" | Horarios: ")
-        for dia, horas_dia in horarios_profesor.items():
-            # print(f"  - {dia}: {horas_dia}")  # Iterate over values
+def verificar_disponibilidad(profesor_nombre, horarios_profesores, horarios_aulas):
+    if profesor_nombre not in horarios_profesores:
+        # print(f"No se encontraron horarios para el profesor {profesor_nombre}")
+        return
 
-            if not horarios_profesor:
-                print(f"No se encontraron horarios disponibles para el profesor {
-                    nombre_profesor}")
-                continue
+    # print(f"Profesor: {profesor_nombre}")
+    # print("Horario de profesores:")
+    for dia, horas_disponibles in horarios_profesores[profesor_nombre].items():
+        # print(f"Día: {dia}")
+        horas_separadas = separar_horas(horas_disponibles)
+        for hora_inicio, hora_fin in horas_separadas:
+            # print(f"\t- Inicio: {hora_inicio}, Fin: {hora_fin}")
 
-        asignado = False
-        for dia, horas_profesor in horarios_profesor.items():
-            if asignado:
-                break
-
-            for aula_nombre, horas_aula in horarios_aulas.items():
-                horas_disponibles_aula = horas_aula.get(dia, [])
-
-                for hora in horas_disponibles_aula:
-                    if hora in horas_profesor:
-                        asignaciones.append({
-                            'materia': materia['nombre'],
-                            'aula': aula_nombre,
-                            'dia': dia,
-                            'hora': hora,
-                            'profesor': nombre_profesor
-                        })
-                        horarios_aulas[aula_nombre][dia].remove(hora)
-                        asignado = True
+            aula_con_disponibilidad = []
+            for aula, aulas_disponibles in horarios_aulas.items():
+                for dia, horas in aulas_disponibles.items():
+                    horas_aula = [int(horas)
+                                  for horas in aulas_disponibles[dia]]
+                    # print(f"\t\t- Aulas disponibles: {horas_aula}")
+                    if hora_inicio in horas_aula and (hora_fin - 1) in horas_aula:
+                        # print(
+                        # f"\t\t- Aula disponible: {aula}, Inicio: {hora_inicio}, Fin: {hora_fin}")
+                        aula_con_disponibilidad.append({
+                            "Aula:": aula, "Dia:": dia, "Hora Inicio:": hora_inicio, "Hora Fin:": hora_fin})
                         break
-
-    return asignaciones
+    return aula_con_disponibilidad
 
 
 # Leer los archivos
@@ -189,10 +185,6 @@ horarios_profesores = organizar_horarios_profesores(profesores)
 
 # Procesar o devolver los horarios organizados almacenados en horarios_disponibles_aulas
 horarios_aulas = organizar_horarios_aulas(aulas)
-
-# Asignar materias a aulas
-asignaciones = asignar_materias_a_aulas(
-    materias, horarios_profesores, horarios_aulas)
 
 # Imprime todo lo obtenido en el codigo
 
@@ -219,20 +211,25 @@ asignaciones = asignar_materias_a_aulas(
 #           asignacion['dia']}, Hora: {asignacion['hora']}, Profesor: {asignacion['profesor']}")
 
 # Imprimir horario del profesor específico
-profesor_nombre = "CATERINA LAMPERTI"
-if profesor_nombre in horarios_profesores:
-    print(f"Profesor: {profesor_nombre}")
-    print("Horario de profesores:")
-    for dia, horas_disponibles in horarios_profesores[profesor_nombre].items():
-        print(f"Día: {dia}")
-        for hora_rango in horas_disponibles:
-            print(f"\t- {hora_rango}")
-else:
-    print(f"No se encontraron horarios para el profesor {profesor_nombre}")
+# profesor_nombre = "CATERINA LAMPERTI"
+# if profesor_nombre in horarios_profesores:
+#     print(f"Profesor: {profesor_nombre}")
+#     print("Horario de profesores:")
+#     for dia, horas_disponibles in horarios_profesores[profesor_nombre].items():
+#         print(f"Día: {dia}")
+#         for hora_rango in horas_disponibles:
+#             print(f"\t- {hora_rango}")
+# else:
+#     print(f"No se encontraron horarios para el profesor {profesor_nombre}")
 
-# Imprimir horario de aulas
-print("\nHorario de aulas:")
-for aula, aulas_disponibles in horarios_aulas.items():
-    print(f"Aula: {aula}")
-    for dia, horas in aulas_disponibles.items():
-        print(f"\t{dia}: {', '.join(horas)}")
+# # Imprimir horario de aulas
+# print("\nHorario de aulas:")
+# for aula, aulas_disponibles in horarios_aulas.items():
+#     print(f"Aula: {aula}")
+#     for dia, horas in aulas_disponibles.items():
+#         print(f"\t{dia}: {', '.join(horas)}")
+
+disponibilidad_profe = verificar_disponibilidad(
+    "CATERINA LAMPERTI", horarios_profesores, horarios_aulas)
+print("Disponibilidad profe: ")
+print(disponibilidad_profe)
