@@ -158,13 +158,13 @@ def verificar_disponibilidad(profesor_nombre, horarios_profesores, horarios_aula
         # print(f"No se encontraron horarios para el profesor {profesor_nombre}")
         return
 
-    print(f"Profesor: {profesor_nombre}")
-    print("Horario de profesores:")
+    # print(f"Profesor: {profesor_nombre}")
+    # print("Horario de profesores:")
     for dia, horas_disponibles in horarios_profesores[profesor_nombre].items():
-        print(f"Día: {dia}")
+        # print(f"Día: {dia}")
         horas_separadas = separar_horas(horas_disponibles)
         for hora_inicio, hora_fin in horas_separadas:
-            print(f"\t- Inicio: {hora_inicio}, Fin: {hora_fin}")
+            # print(f"\t- Inicio: {hora_inicio}, Fin: {hora_fin}")
 
             aula_con_disponibilidad = []
             for aula, aulas_disponibles in horarios_aulas.items():
@@ -172,11 +172,15 @@ def verificar_disponibilidad(profesor_nombre, horarios_profesores, horarios_aula
                     horas_aula = [int(horas)
                                   for horas in aulas_disponibles[dia]]
                     # print(f"\t\t- Aulas disponibles: {horas_aula}")
-                    if hora_inicio in horas_aula and (hora_fin) in horas_aula:
-                        # print(
-                        #     f"\t\t- Dia: {dia}, Aula disponible: {aula}, Inicio: {hora_inicio}, Fin: {hora_fin}")
-                        aula_con_disponibilidad.append({
-                            "Aula:": aula, "Dia:": dia, "Hora Inicio:": hora_inicio, "Hora Fin:": hora_fin})
+                    if hora_inicio in horas_aula:
+                        print("Hora inicio", hora_inicio, "encontrada")
+                        if hora_fin in horas_aula:
+                            print("Hora fin", hora_fin, "encontrada")
+                        # print(hora_inicio, hora_fin)
+                            print(
+                                f"\t\t- Dia: {dia}, Aula disponible: {aula}, Inicio: {hora_inicio}, Fin: {hora_fin}")
+                            aula_con_disponibilidad.append({
+                                "Aula:": aula, "Dia:": dia, "Hora Inicio:": hora_inicio, "Hora Fin:": hora_fin})
     return aula_con_disponibilidad
 
 
@@ -252,6 +256,7 @@ horarios_aulas = organizar_horarios_aulas(aulas)
 disponibilidad_profe = verificar_disponibilidad(
     "CATERINA LAMPERTI", horarios_profesores, horarios_aulas)
 print("Disponibilidad profe: ")
-print(disponibilidad_profe)
+for aula_con_disponibilidad in disponibilidad_profe:
+    print()
 
 # test_asignar = asignar_materias_a_aulas(materias)
