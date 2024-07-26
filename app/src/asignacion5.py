@@ -327,4 +327,4 @@ horarios_aulas = organizar_horarios_aulas(aulas)
 #           asignacion['Dia']} | {asignacion['Hora inicio']} | {asignacion['Hora fin']}")
 
 # escribir_sugestiones(asignar_materias_a_aulas(materias), 'sugerencias.csv')
-asignar_sugestiones_automatico(asignar_materias_a_aulas, horarios_aulas)
+# asignar_sugestiones_automatico(asignar_materias_a_aulas, horarios_aulas)
