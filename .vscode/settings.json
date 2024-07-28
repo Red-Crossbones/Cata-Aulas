@@ -1,4 +1,5 @@
 {
     "java.compile.nullAnalysis.mode": "automatic",
-    "python.formatting.provider": "autopep8"
+    "python.formatting.provider": "autopep8",
+    "C_Cpp.dimInactiveRegions": false
 }
