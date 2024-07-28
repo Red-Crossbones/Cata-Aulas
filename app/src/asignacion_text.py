@@ -248,10 +248,9 @@ def crear_sugerencia_asignacion(archivo_aulas, archivo_destino_aulas, archivo_ma
 def asignacion_automatica(archivo_aulas_a_usar, archivo_materias_a_usar):
     aulas_a_usar = leer_aulas(archivo_aulas_a_usar)
     materias_originales = leer_materias(archivo_materias_a_usar)
-    materias_reordenadas = reordenar_materias_por_alumnos(
-        archivo_materias_a_usar)
-    sugerencias_a_ = automaticacion_helper(
-        materias, horarios_disponibles_profesores, horarios_disponibles_aulas, 'Anasagasti II')
+    materias_reordenadas = reordenar_materias_por_alumnos(materias_originales)
+    sugerencias = automaticacion_helper(
+        materias_reordenadas, horarios_disponibles_profesores, horarios_disponibles_aulas, 'Anasagasti II')
 
 
 def automaticacion_helper(materias, horarios_profesores, horarios_aulas, edificio_predefinido):
@@ -304,8 +303,8 @@ crear_sugerencia_asignacion(
     'Aulas.csv', 'sugerencia_asignacion.csv', 'Materias.csv', 'Materias_reordenadas.csv')
 
 # Asignar materias aulas automaticamente
-# asignacion_automatica(
-#     'sugerencia_asignacion.csv', 'Materias.csv', sugerencias)
+asignacion_automatica(
+    'sugerencia_asignacion.csv', 'Materias.csv')
 
 # test = automaticacion_helper(
 #     materias, horarios_disponibles_profesores, horarios_disponibles_aulas, 'Anasagasti II')
