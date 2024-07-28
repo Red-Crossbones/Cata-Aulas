@@ -4,7 +4,7 @@ import sys
 from collections import defaultdict
 import shutil
 
-# Configurar la salida estándar a UTF-8
+# Configurar la salida estándar a ISO-8859-1 (o cambiar a 'utf-8' si se prefiere)
 sys.stdout.reconfigure(encoding='ISO-8859-1')
 
 
@@ -48,14 +48,13 @@ def leer_materias(archivo):
             reader = csv.reader(csvfile)
             next(reader)  # Saltar encabezado
             for row in reader:
-                if len(row) >= 12:  # Ajustado para asegurar que todas las columnas requeridas estén presentes
-                    # Convertir lista de diccionarios a un string con nombres de profesores
+                if len(row) >= 12:
                     profesores = row[11]
                     try:
                         profesores_lista = ast.literal_eval(profesores)
                         if isinstance(profesores_lista, list):
-                            profesores = ', '.join(
-                                f"{prof['nombre']} {prof['apellido']}" for prof in profesores_lista)
+                            profesores = ', '.join(f"{prof['nombre']} {
+                                                   prof['apellido']}" for prof in profesores_lista)
                     except (ValueError, SyntaxError):
                         pass
                     materias.append({
@@ -85,7 +84,7 @@ def leer_profesores(archivo):
             reader = csv.reader(csvfile)
             next(reader)  # Saltar encabezado
             for row in reader:
-                if len(row) >= 8:  # Ajustado para asegurar que todas las columnas requeridas estén presentes
+                if len(row) >= 8:
                     profes_dict = {
                         'nombre': row[2],
                         'apellido': row[1],
@@ -105,40 +104,32 @@ def leer_profesores(archivo):
 
 def organizar_horarios_profesores(profesores):
     horarios_disponibles = defaultdict(lambda: defaultdict(list))
-
     for profesor in profesores:
         profesor_horarios = defaultdict(list)
         str_copia_horarios_disponibles = profesor['horarios_disponibles']
-
         for bloque_dia_horas in str_copia_horarios_disponibles.split(';'):
-            dia_horas = bloque_dia_horas.strip().split(',')  # Separar por comas
-            dia = dia_horas[0].strip()  # Obtener el día
-
+            dia_horas = bloque_dia_horas.strip().split(',')
+            dia = dia_horas[0].strip()
             for horas_rango in dia_horas[1:]:
                 horas = horas_rango.strip().split('-')
                 if len(horas) == 2:
                     hora_inicio = int(horas[0].strip())
                     hora_fin = int(horas[1].strip())
                     profesor_horarios[dia].append(f"{hora_inicio}-{hora_fin}")
-
         nombre_completo = f"{profesor['nombre']} {profesor['apellido']}"
         horarios_disponibles[nombre_completo] = profesor_horarios
-
     return horarios_disponibles
 
 
 def organizar_horarios_aulas(aulas):
     horarios_disponibles_aulas = defaultdict(lambda: defaultdict(list))
-
     for aula in aulas:
         disponibilidad_aula = aula['disponibilidad']
-
         for dia, disponibilidad_horaria in disponibilidad_aula.items():
             for hora, disponible in enumerate(disponibilidad_horaria, start=8):
                 if disponible:
                     horarios_disponibles_aulas[aula['nombre']][dia].append(f"{
                                                                            hora}")
-
     return horarios_disponibles_aulas
 
 
@@ -158,7 +149,6 @@ def verificar_disponibilidad(profesor_nombre, horarios_profesores, horarios_aula
     aula_con_disponibilidad = []
     if profesor_nombre not in horarios_profesores:
         return aula_con_disponibilidad
-
     for dia, horas_disponibles in horarios_profesores[profesor_nombre].items():
         horas_separadas = separar_horas(horas_disponibles)
         for hora_inicio, hora_fin in horas_separadas:
@@ -168,7 +158,8 @@ def verificar_disponibilidad(profesor_nombre, horarios_profesores, horarios_aula
                                   for horas in aulas_disponibles[dia]]
                     if hora_inicio in horas_aula and hora_fin in horas_aula:
                         aula_con_disponibilidad.append({
-                            "Aula:": aula, "Dia:": dia, "Hora Inicio:": hora_inicio, "Hora Fin:": hora_fin})
+                            "Aula:": aula, "Dia:": dia, "Hora Inicio:": hora_inicio, "Hora Fin:": hora_fin
+                        })
     return aula_con_disponibilidad
 
 
@@ -181,7 +172,6 @@ def asignar_materias_a_aulas(materias, horarios_profesores, horarios_aulas, edif
                 profesor_nombre, horarios_profesores, horarios_aulas)
             if aulas_con_disponibilidad:
                 for aula in aulas_con_disponibilidad:
-                    # Obtener el edificio correspondiente al aula
                     aula_nombre = aula['Aula:']
                     aula_edificio = next(
                         (a['edificio'] for a in aulas if a['nombre'] == aula_nombre), None)
@@ -193,7 +183,7 @@ def asignar_materias_a_aulas(materias, horarios_profesores, horarios_aulas, edif
                             'Dia': aula['Dia:'],
                             'Hora inicio': aula['Hora Inicio:'],
                             'Hora fin': aula['Hora Fin:'],
-                            'Edificio': aula_edificio  # Agregar el edificio a la sugerencia
+                            'Edificio': aula_edificio
                         })
             else:
                 print(f"{materia['nombre']} | No hay aulas disponibles")
@@ -203,8 +193,8 @@ def asignar_materias_a_aulas(materias, horarios_profesores, horarios_aulas, edif
 def escribir_sugerencias(sugerencias, archivo):
     with open(archivo, 'w', newline='', encoding='ISO-8859-1') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(['Materia', 'Profesor', 'Aula', 'Dia', 'Hora inicio',
-                        'Hora fin', 'Edificio'])  # Agregar encabezado para Edificio
+        writer.writerow(['Materia', 'Profesor', 'Aula', 'Dia',
+                        'Hora inicio', 'Hora fin', 'Edificio'])
         for sugerencia in sugerencias:
             writer.writerow([
                 sugerencia['Materia'],
@@ -213,7 +203,7 @@ def escribir_sugerencias(sugerencias, archivo):
                 sugerencia['Dia'],
                 sugerencia['Hora inicio'],
                 sugerencia['Hora fin'],
-                sugerencia['Edificio']  # Incluir el edificio en la fila
+                sugerencia['Edificio']
             ])
 
 
@@ -231,22 +221,15 @@ def copiar_archivo_aulas(archivo_origen, archivo_destino):
 def reordenar_materias_por_alumnos(materias):
     return sorted(materias, key=lambda x: x['alumnos_esperados'], reverse=True)
 
-# Función principal para copiar el archivo y reordenar las materias
-
 
 def crear_sugerencia_asignacion(archivo_aulas, archivo_destino_aulas, archivo_materias, archivo_destino_materias):
-    # Copiar el archivo de aulas
     copiar_archivo_aulas(archivo_aulas, archivo_destino_aulas)
-
-    # Leer materias y reordenarlas
     materias = leer_materias(archivo_materias)
     materias_reordenadas = reordenar_materias_por_alumnos(materias)
-
-    # Escribir las materias reordenadas en un nuevo archivo
     with open(archivo_destino_materias, 'w', newline='', encoding='ISO-8859-1') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(['Codigo Guarani', 'Nombre', 'Carrera', 'Año', 'Cuatrimestre', 'Profesores',
-                        'Alumnos Esperados', 'Horas Frente Curso', 'Comisiones'])  # Encabezado ajustado
+        writer.writerow(['Codigo Guarani', 'Nombre', 'Carrera', 'Año', 'Cuatrimestre',
+                        'Profesores', 'Alumnos Esperados', 'Horas Frente Curso', 'Comisiones'])
         for materia in materias_reordenadas:
             writer.writerow([
                 materia['codigo_guarani'],
@@ -259,7 +242,6 @@ def crear_sugerencia_asignacion(archivo_aulas, archivo_destino_aulas, archivo_ma
                 materia['horas_frente_curso'],
                 materia['comisiones']
             ])
-
     print(f"Materias reordenadas y guardadas en {archivo_destino_materias}")
 
 
@@ -278,7 +260,6 @@ sugerencias = asignar_materias_a_aulas(
 
 # Escribir las sugerencias en un archivo
 escribir_sugerencias(sugerencias, 'Sugerencias.csv')
-
 print("Asignación completada. Las sugerencias se han guardado en 'Sugerencias.csv'.")
 
 # Crear archivos de sugerencia
