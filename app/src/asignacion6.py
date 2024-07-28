@@ -177,13 +177,15 @@ def asignar_materias_a_aulas(materias, horarios_profesores, horarios_aulas, edif
                         (a['edificio'] for a in aulas if a['nombre'] == aula_nombre), None)
                     if aula_edificio == edificio_predefinido:
                         sugerencias.append({
+                            'Carrera': materia['carrera'],
+                            'Codigo Guarani': materia['codigo_guarani'],
                             'Materia': materia['nombre'],
                             'Profesor': profesor_nombre,
+                            'Edificio': aula_edificio,
                             'Aula': aula['Aula:'],
                             'Dia': aula['Dia:'],
                             'Hora inicio': aula['Hora Inicio:'],
-                            'Hora fin': aula['Hora Fin:'],
-                            'Edificio': aula_edificio
+                            'Hora fin': aula['Hora Fin:']
                         })
             else:
                 print(f"{materia['nombre']} | No hay aulas disponibles")
@@ -193,17 +195,19 @@ def asignar_materias_a_aulas(materias, horarios_profesores, horarios_aulas, edif
 def escribir_sugerencias(sugerencias, archivo):
     with open(archivo, 'w', newline='', encoding='ISO-8859-1') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(['Materia', 'Profesor', 'Aula', 'Dia',
-                        'Hora inicio', 'Hora fin', 'Edificio'])
+        writer.writerow(['Carrera', 'Codigo Guarani', 'Materia', 'Edificio',
+                        'Profesor', 'Aula', 'Dia', 'Hora inicio', 'Hora fin'])
         for sugerencia in sugerencias:
             writer.writerow([
-                sugerencia['Materia'],
-                sugerencia['Profesor'],
-                sugerencia['Aula'],
-                sugerencia['Dia'],
-                sugerencia['Hora inicio'],
-                sugerencia['Hora fin'],
-                sugerencia['Edificio']
+                sugerencia.get('Carrera', ''),
+                sugerencia.get('Codigo Guarani', ''),
+                sugerencia.get('Materia', ''),
+                sugerencia.get('Edificio', ''),
+                sugerencia.get('Profesor', ''),
+                sugerencia.get('Aula', ''),
+                sugerencia.get('Dia', ''),
+                sugerencia.get('Hora inicio', ''),
+                sugerencia.get('Hora fin', '')
             ])
 
 
@@ -262,6 +266,8 @@ def asignacion_helper(materias, horarios_profesores, horarios_aulas, edificio_pr
                         (a['edificio'] for a in aulas if a['nombre'] == aula_nombre), None)
                     if aula_edificio == edificio_predefinido:
                         sugerencias.append({
+                            'Carrera': materia['carrera'],
+                            'Codigo Guarani': materia['codigo_guarani'],
                             'Materia': materia['nombre'],
                             'Profesor': profesor_nombre,
                             'Aula': aula['Aula:'],
@@ -284,9 +290,9 @@ def asignacion_automatica(archivo_aulas_a_usar, archivo_materias_a_usar):
     profesores = leer_profesores('Profesores.csv')
     horarios_disponibles_profesores = organizar_horarios_profesores(profesores)
     horarios_disponibles_aulas = organizar_horarios_aulas(aulas_a_usar)
-    sugerencias = asignacion_helper(
+    sugerencias_helper = asignacion_helper(
         materias_reordenadas, horarios_disponibles_profesores, horarios_disponibles_aulas, 'Anasagasti II')
-    escribir_sugerencias(sugerencias, 'Sugerencias.csv')
+    escribir_sugerencias(sugerencias_helper, 'Sugerencias.csv')
     print("Asignación automática completada. Las sugerencias se han guardado en 'Sugerencias.csv'.")
 
 
