@@ -245,30 +245,35 @@ def crear_sugerencia_asignacion(archivo_aulas, archivo_destino_aulas, archivo_ma
     print(f"Materias reordenadas y guardadas en {archivo_destino_materias}")
 
 
-def asignacion_helper(materias, horarios_disponibles_profesores, horarios_disponibles_aulas, aula_edificio):
+def asignacion_helper(materias, horarios_profesores, horarios_aulas, edificio_predefinido):
     sugerencias = []
     for materia in materias:
-        profesores = separar_profesores(materia['profesores'])
-        asignado = False
-        for profesor in profesores:
-            disponibilidad = verificar_disponibilidad(
-                profesor, horarios_disponibles_profesores, horarios_disponibles_aulas)
-            if disponibilidad:
-                # Tomar solo la primera disponibilidad encontrada
-                aula = disponibilidad[0]
-                sugerencias.append({
-                    'Materia': materia['nombre'],
-                    'Profesor': profesor,
-                    'Aula': aula['Aula:'],
-                    'Dia': aula['Dia:'],
-                    'Hora inicio': aula['Hora Inicio:'],
-                    'Hora fin': aula['Hora Fin:'],
-                    'Edificio': aula_edificio
-                })
-                asignado = True
-                break
-        if not asignado:
-            print(f"{materia['nombre']} | No hay aulas disponibles")
+        print(f"Evaluando materia: {materia['nombre']} con profesores: {
+              materia['profesores']}")
+        profesores_separados = separar_profesores(materia['profesores'])
+        for profesor_nombre in profesores_separados:
+            print(f"  Evaluando disponibilidad de profesor: {profesor_nombre}")
+            aulas_con_disponibilidad = verificar_disponibilidad(
+                profesor_nombre, horarios_profesores, horarios_aulas)
+            if aulas_con_disponibilidad:
+                for aula in aulas_con_disponibilidad:
+                    aula_nombre = aula['Aula:']
+                    aula_edificio = next(
+                        (a['edificio'] for a in aulas if a['nombre'] == aula_nombre), None)
+                    if aula_edificio == edificio_predefinido:
+                        sugerencias.append({
+                            'Materia': materia['nombre'],
+                            'Profesor': profesor_nombre,
+                            'Aula': aula['Aula:'],
+                            'Dia': aula['Dia:'],
+                            'Hora inicio': aula['Hora Inicio:'],
+                            'Hora fin': aula['Hora Fin:'],
+                            'Edificio': aula_edificio
+                        })
+                        print(f"    Asignación encontrada: {sugerencias[-1]}")
+                        break  # Salir del loop de aulas, pasar al siguiente profesor
+            else:
+                print(f"    {profesor_nombre} | No hay aulas disponibles")
     return sugerencias
 
 
@@ -276,13 +281,13 @@ def asignacion_automatica(archivo_aulas_a_usar, archivo_materias_a_usar):
     aulas_a_usar = leer_aulas(archivo_aulas_a_usar)
     materias_originales = leer_materias(archivo_materias_a_usar)
     materias_reordenadas = reordenar_materias_por_alumnos(materias_originales)
-    horarios_disponibles_profesores = organizar_horarios_profesores(
-        leer_profesores('Profesores.csv'))
+    profesores = leer_profesores('Profesores.csv')
+    horarios_disponibles_profesores = organizar_horarios_profesores(profesores)
     horarios_disponibles_aulas = organizar_horarios_aulas(aulas_a_usar)
     sugerencias = asignacion_helper(
         materias_reordenadas, horarios_disponibles_profesores, horarios_disponibles_aulas, 'Anasagasti II')
     escribir_sugerencias(sugerencias, 'Sugerencias.csv')
-    # print("Asignación automática completada. Las sugerencias se han guardado en 'Sugerencias.csv'.")
+    print("Asignación automática completada. Las sugerencias se han guardado en 'Sugerencias.csv'.")
 
 
 # Leer los archivos
